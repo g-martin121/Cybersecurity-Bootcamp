@@ -19,4 +19,4 @@ def list_directories(path):
         print(f"Error occurred: {e}")
         
 if __name__ == "__main__":
-    list_directories("C:\\")
+    list_directories("/home")

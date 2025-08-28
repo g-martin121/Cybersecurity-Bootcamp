@@ -1,0 +1,107 @@
+#!/usr/bin/env python3
+"""
+Comprehensive Python System/File Tools Reference
+Works on Linux (Kali), macOS, and Windows.
+Perfect for cybersecurity labs.
+"""
+import os
+import stat
+import sys
+import platform
+import shutil
+import subprocess
+# Unix-only modules
+HAS_UNIX_TOOLS = False
+if platform.system() in ["Linux", "Darwin"]:
+    import pwd
+    import grp
+    HAS_UNIX_TOOLS = True
+# --- PATH UTILITIES (os.path) ---
+# os.path.exists(path)       -> Does file/folder exist?
+# os.path.isfile(path)       -> Is it a regular file?
+# os.path.isdir(path)        -> Is it a directory?
+# os.path.getsize(path)      -> File size in bytes
+# os.path.abspath(path)      -> Absolute path
+# os.path.basename(path)     -> Filename from path
+# os.path.dirname(path)      -> Directory portion
+# os.path.splitext(path)     -> Split filename and extension
+# os.path.relpath(path, start) -> Relative path from start
+# os.path.join(a, b)        -> Join paths safely
+# os.path.isabs(path)        -> Is path absolute?
+# --- OS MODULE ---
+# os.listdir(path)            -> List files/folders
+# os.makedirs(path, exist_ok=True) -> Create directories recursively
+# os.remove(path)             -> Delete a file
+# os.rename(src, dst)         -> Rename file/folder
+# os.environ                  -> Environment variables
+# os.getcwd() / os.chdir(path) -> Current / Change working directory
+# --- STAT MODULE ---
+# stat.filemode(st_mode)      -> Permissions as string (e.g. -rwxr-xr-x)
+# stat.S_ISUID, S_ISGID, S_ISVTX -> SUID/SGID/Sticky bits
+# stat.S_IRUSR/IWUSR/IXUSR   -> Owner read/write/execute
+# stat.S_IRGRP/IWGRP/IXGRP   -> Group permissions
+# stat.S_IROTH/IWOTH/IXOTH   -> Other permissions
+# --- PWD & GRP MODULES (Unix only) ---
+# pwd.getpwuid(uid).pw_name  -> Username
+# grp.getgrgid(gid).gr_name  -> Group name
+# --- SYS MODULE ---
+# sys.argv                   -> Command line args
+# sys.exit(code)             -> Exit program
+# sys.version                -> Python version
+# --- PLATFORM MODULE ---
+# platform.system()          -> OS name
+# platform.release()         -> OS release
+# platform.version()         -> Detailed OS version
+# --- SHUTIL MODULE ---
+# shutil.copy(src, dst)      -> Copy a file
+# shutil.copytree(src, dst)  -> Copy entire directory tree
+# shutil.move(src, dst)      -> Move or rename
+# shutil.rmtree(path)        -> Delete directory tree
+# shutil.disk_usage(path)    -> Disk usage: total, used, free
+# --- SUBPROCESS MODULE ---
+# subprocess.run([...])           -> Run command
+# subprocess.run([...], check=True) -> Raise exception on failure
+# subprocess.check_output([...])  -> Capture command output
+# subprocess.Popen([...])         -> Interactive processes
+# -------------------- DEMO SECTION --------------------
+# Target path for demo
+path = "/bin" if platform.system() != "Windows" else "C:\\Windows\\System32"
+print("\n[File Listing Demo]")
+for item in os.listdir(path):
+    item_path = os.path.join(path, item)
+    if os.path.isfile(item_path):
+        size = os.path.getsize(item_path)
+        st = os.stat(item_path)
+        permissions = stat.filemode(st.st_mode)
+        owner = "N/A"
+        group = "N/A"
+        if HAS_UNIX_TOOLS:
+            owner = pwd.getpwuid(st.st_uid).pw_name
+            group = grp.getgrgid(st.st_gid).gr_name
+        suid_flag = "SUID" if (st.st_mode & stat.S_ISUID) else ""
+        print(f"{item:25} {size:10} bytes  {permissions}  {owner}:{group} {suid_flag}")
+print("\n[Directory Listing Demo]")
+for item in os.listdir(path):
+    item_path = os.path.join(path, item)
+    if os.path.isdir(item_path):
+        print(f"[DIR] {item}")
+print("\n[System Info Demo]")
+print("Python version :", sys.version.split()[0])
+print("OS             :", platform.system(), platform.release())
+print("Current dir    :", os.getcwd())
+if shutil.disk_usage(path):
+    total, used, free = shutil.disk_usage(path)
+    print(f"Disk usage     : Total={total//1_000_000_000}GB, Used={used//1_000_000_000}GB, Free={free//1_000_000_000}GB")
+print("\n[Subprocess Demo]")
+cmd = ["ls", "-l", path] if platform.system() != "Windows" else ["dir"]
+result = subprocess.run(cmd, capture_output=True, text=True, shell=True)
+for line in result.stdout.splitlines()[:5]:  # show first 5 lines
+    print(line)
+print("\n[Path Utilities Demo]")
+sample_file = os.path.join(path, item)
+print("Absolute path     :", os.path.abspath(sample_file))
+print("Filename          :", os.path.basename(sample_file))
+print("Directory         :", os.path.dirname(sample_file))
+print("Splitext          :", os.path.splitext(sample_file))
+print("Is absolute?      :", os.path.isabs(sample_file))
+print("Relative to cwd   :", os.path.relpath(sample_file))
