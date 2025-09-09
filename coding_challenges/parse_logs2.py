@@ -16,4 +16,4 @@ def parse_logs2(file_path):
         print(f"Error: {e}")
 
 if __name__ == "__main__":
-    parse_logs2(r"C:\Users\marti\Documents\security_log_4625.csv.csv")
+    parse_logs2(r"C:\Users\marti\Documents\security_log2.csv")
