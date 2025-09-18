@@ -6,7 +6,7 @@ def monitor_connections():
     try:
         for i in range(3):
             timestamp = datetime.now().strftime("%Y%m%d %H:%M:%S")
-            print(f"Current time: {timestamp}")
+            print(f"\nCurrent time: {timestamp}")
             connections = psutil.net_connections(kind="tcp")
 
             for conn in connections:
